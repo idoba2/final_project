@@ -1,0 +1,349 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Form Page</title>
+  <link rel="stylesheet" type="text/css" href="../CSS/HomePage_CSS/General_css.css">
+  <link rel="icon" type="image/png" href="../IMG/HomePage_Images/icon.png">
+</head>
+
+<body class="body">
+  <header class="header">
+  <picture>
+    <source media="(min-width: 900px)" srcset="../IMG/HomePage_Images/header-lg.png">
+    <source media="(min-width: 620px)" srcset="../IMG/HomePage_Images/header-md.png">
+    <img src="../IMG/HomePage_Images/header-sm.png" alt="Pokemon banner">
+  </picture>
+</header>
+  <%
+  const displayName = (typeof user !== 'undefined' && user && user.username)
+    ? user.username
+    : (username || 'Trainer');
+%>
+<nav class="main-menu grid-container" role="navigation" aria-label="Main menu">
+  <!-- Main navigation stays the same here too -->
+  <ul class="main-menu-list">
+    <li class="main-menu-item"><a href="/" class="main-menu-heading" title="Home Page">Home Page</a></li>
+    <li class="main-menu-item"><a href="/Pokedex" class="main-menu-heading" title="Pokedex">Pokedex</a></li>
+    <li class="main-menu-item"><a href="/Anime" class="main-menu-heading" title="Anime Series">Anime Series</a></li>
+    <li class="main-menu-item"><a href="/Games" class="main-menu-heading" title="Games">Games</a></li>
+    <% if (isLoggedIn) { %>
+      <li class="main-menu-item"><a href="/Add" class="main-menu-heading" title="Add Content">Add Content</a></li>
+    <% } else { %>
+      <li class="main-menu-item"><span class="main-menu-heading disabled-link-wrapper" data-tooltip="You must log in to add content" aria-disabled="true">Add Content</span></li>
+    <% } %>
+
+    <% if (!isLoggedIn) { %>
+      <li class="main-menu-item"><a href="/Add" class="main-menu-heading" title="Login">Login</a></li>
+    <% } else { %>
+      <li class="main-menu-item nav-profile-container">
+        <button type="button" class="main-menu-heading profile-avatar" aria-label="Profile menu" aria-haspopup="true" aria-expanded="false"></button>
+        <ul class="main-menu-sub profile-dropdown">
+          <li class="dropdown-greeting">Hello, <span class="dropdown-username"><%= displayName %></span>!</li>
+          <li><a href="/Profile" class="dropdown-profile-link">View Profile</a></li>
+          <li>
+            <form method="post" action="/logout">
+              <button type="submit" class="dropdown-logout">Logout</button>
+            </form>
+          </li>
+        </ul>
+      </li>
+    <% } %>
+  </ul>
+</nav>
+  <div class="main-size">
+    <div class="content">
+      <main class="main">
+        <div class="flex-container">
+          <% if (!isLoggedIn) { %>
+            <!-- If user is not logged in, show welcome + auth forms -->
+            <div class="welcome-section">
+              <h2><strong>Welcome to the Poke-Community-DB!</strong></h2>
+              <p class="welcome-text">
+                Our complete Pokedex is written by trainers, for trainers. To maintain data integrity, only registered Pokemon Researchers can add new content. Register now to leave your mark, and every item you add will proudly give you credit!
+              </p>
+            </div>
+
+            <!-- Login/Register tabs live in one clean auth box -->
+            <div class="auth-container auth-container--sm">
+              <!-- Tab buttons switch between login and register forms -->
+              <div class="auth-tabs">
+                <button type="button" class="auth-tab active" data-tab="login">
+                  <span class="tab-icon">&#128274;</span> Login
+                </button>
+                <button type="button" class="auth-tab" data-tab="register">
+                  <span class="tab-icon">&#128221;</span> Register
+                </button>
+              </div>
+
+              <!-- Login form -->
+              <div class="auth-form-wrapper active" id="login-form">
+                <form class="register-form login-auth-form" method="post" action="/login" autocomplete="off">
+                  <h3 class="form-title-tight">Login to Your Account</h3>
+                  <label>User Name: <input type="text" name="username" required></label>
+                  <label>Password: <input type="password" name="password" class="login-password" required></label>
+                  <p><input type="submit" value="Login"></p>
+                  <p class="form-error" data-auth-error></p>
+                </form>
+              </div>
+
+              <!-- Register form -->
+              <div class="auth-form-wrapper" id="register-form">
+                <form class="register-form auth-register-form" method="post" action="/register" autocomplete="off">
+                  <h3 class="form-title-tight">Create New Account</h3>
+                  <label>User Name: <input type="text" name="username" required></label>
+                  <label>Email: <input type="email" name="email" required></label>
+                  <label>Birth Date: <input type="date" name="birth_date" required max="<%= new Date(new Date().setFullYear(new Date().getFullYear() - 13)).toISOString().split('T')[0] %>" min="1900-01-01"></label>
+                  <label>City:
+                    <select name="city" required>
+                      <option value="" selected disabled>Select...</option>
+                      <option value="Tel-Aviv">Tel-Aviv</option>
+                      <option value="Herzeliya">Herzeliya</option>
+                      <option value="Haifa">Haifa</option>
+                      <option value="Petah-Tikva">Petah-Tikva</option>
+                      <option value="Ramat Gan">Ramat Gan</option>
+                      <option value="Ra'anana">Ra'anana</option>
+                      <option value="Givataym">Givataym</option>
+                      <option value="Kyriat Ono">Kyriat Ono</option>
+                    </select>
+                  </label>
+                  <label>Gender:
+                    <select name="gender" required>
+                      <option value="" selected disabled>Select...</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </label>
+                  <label>Occupation:
+                    <select name="occupation" required>
+                      <option value="" selected disabled>Select...</option>
+                      <option value="Working">Working</option>
+                      <option value="Unemployed">Unemployed</option>
+                      <option value="Retired">Retired</option>
+                    </select>
+                  </label>
+                  <label>Password: <input type="password" name="password" id="registerPassword" required></label>
+                  <label>Confirm Password: <input type="password" name="confirm_password" id="confirmPassword" disabled required></label>
+                  <p><input type="submit" value="Sign Up"></p>
+                  <p class="form-error" data-auth-error></p>
+                </form>
+              </div>
+            </div>
+
+          <% } else { %>
+            <!-- Logged-in users can add Pokemon/Anime/Games from these tabs -->
+            <div class="auth-container auth-container--md">
+              <!-- Content type tabs -->
+              <div class="auth-tabs">
+                <button type="button" class="auth-tab active" data-tab="pokemon">
+                  <span class="tab-icon">&#9889;</span> Pokemon
+                </button>
+                <button type="button" class="auth-tab" data-tab="anime">
+                  <span class="tab-icon">&#128250;</span> Anime
+                </button>
+                <button type="button" class="auth-tab" data-tab="game">
+                  <span class="tab-icon">&#127918;</span> Game
+                </button>
+              </div>
+
+            <div class="auth-form-wrapper active" id="pokemon-form">
+              <h2>Add Pokemon</h2>
+              <form method="post" action="/addPokemon" enctype="multipart/form-data" autocomplete="off">
+                <fieldset class="form-fieldset">
+                  <legend><strong>Pokemon Details</strong></legend>
+                  <label class="label-block">Pokemon Name:
+                    <input type="text" name="pokemon_name" required>
+                  </label>
+                  <div class="form-row form-row--start">
+                    <label class="label-column">Type 1:
+                      <select id="pokemonType1" name="pokemon_type_1" required>
+                        <option value="" selected disabled>Select...</option>
+                        <option value="Normal">Normal</option>
+                        <option value="Fire">Fire</option>
+                        <option value="Water">Water</option>
+                        <option value="Grass">Grass</option>
+                        <option value="Electric">Electric</option>
+                        <option value="Ice">Ice</option>
+                        <option value="Fighting">Fighting</option>
+                        <option value="Poison">Poison</option>
+                        <option value="Ground">Ground</option>
+                        <option value="Flying">Flying</option>
+                        <option value="Psychic">Psychic</option>
+                        <option value="Bug">Bug</option>
+                        <option value="Rock">Rock</option>
+                        <option value="Ghost">Ghost</option>
+                        <option value="Dragon">Dragon</option>
+                        <option value="Dark">Dark</option>
+                        <option value="Steel">Steel</option>
+                        <option value="Fairy">Fairy</option>
+                        <option value="Stellar">Stellar</option>
+                      </select>
+                    </label>
+                    <label class="label-column">Type 2:
+                      <select id="pokemonType2" name="pokemon_type_2">
+                        <option value="" selected>None</option>
+                        <option value="Normal">Normal</option>
+                        <option value="Fire">Fire</option>
+                        <option value="Water">Water</option>
+                        <option value="Grass">Grass</option>
+                        <option value="Electric">Electric</option>
+                        <option value="Ice">Ice</option>
+                        <option value="Fighting">Fighting</option>
+                        <option value="Poison">Poison</option>
+                        <option value="Ground">Ground</option>
+                        <option value="Flying">Flying</option>
+                        <option value="Psychic">Psychic</option>
+                        <option value="Bug">Bug</option>
+                        <option value="Rock">Rock</option>
+                        <option value="Ghost">Ghost</option>
+                        <option value="Dragon">Dragon</option>
+                        <option value="Dark">Dark</option>
+                        <option value="Steel">Steel</option>
+                        <option value="Fairy">Fairy</option>
+                        <option value="Stellar">Stellar</option>
+                      </select>
+                    </label>
+                  </div>
+                </fieldset>
+                <fieldset class="form-fieldset">
+                  <legend><strong>Base Stats</strong></legend>
+                  <div class="form-row">
+                    <label>HP:
+                      <input type="number" name="hp" min="1" required class="input-num-sm">
+                    </label>
+                    <label>Attack:
+                      <input type="number" name="attack" min="1" required class="input-num-sm">
+                    </label>
+                    <label>Defense:
+                      <input type="number" name="defense" min="1" required class="input-num-sm">
+                    </label>
+                    <label>Sp. Atk:
+                      <input type="number" name="sp_atk" min="1" required class="input-num-sm">
+                    </label>
+                    <label>Sp. Def:
+                      <input type="number" name="sp_def" min="1" required class="input-num-sm">
+                    </label>
+                  </div>
+                </fieldset>
+                <fieldset class="form-fieldset">
+                  <legend><strong>Picture</strong></legend>
+                  <label class="label-block">Upload Image:
+                    <input type="file" name="pokemon_image" accept=".jpg,.jpeg,.png,.gif" required>
+                  </label>
+                </fieldset>
+                <p class="form-actions"><input type="submit" value="Save Pokemon"></p>
+              </form>
+            </div>
+
+            <div class="auth-form-wrapper" id="anime-form">
+              <h2>Add Anime</h2>
+              <form method="post" action="/addAnime" enctype="multipart/form-data" autocomplete="off">
+                <fieldset class="form-fieldset">
+                  <legend><strong>Anime Details</strong></legend>
+                  <label class="label-block">Anime Series Title:
+                    <input type="text" name="anime_title" required>
+                  </label>
+                  <label class="label-block">Season / Arc Name:
+                    <input type="text" name="season_name" required>
+                  </label>
+                  <div class="form-row">
+                    <label>Seasons:
+                      <input type="number" name="seasons" min="1" required class="input-num-md">
+                    </label>
+                    <label>Episodes:
+                      <input type="number" name="episodes" min="1" required class="input-num-md">
+                    </label>
+                  </div>
+                  <div class="form-row">
+                    <label>Start Date:
+                      <input type="date" id="animeStartDate" name="start_date" required max="<%= new Date(new Date().setFullYear(new Date().getFullYear() + 10)).toISOString().split('T')[0] %>" min="1997-01-01">
+                    </label>
+                    <label>End Date:
+                      <input type="date" id="animeEndDate" name="end_date" required max="<%= new Date(new Date().setFullYear(new Date().getFullYear() + 10)).toISOString().split('T')[0] %>" min="1997-01-01">
+                    </label>
+                  </div>
+                  <label class="label-block">Description:
+                    <textarea name="anime_description" rows="4" class="textarea-block"></textarea>
+                  </label>
+                </fieldset>
+                <fieldset class="form-fieldset">
+                  <legend><strong>Picture</strong></legend>
+                  <label class="label-block">Upload Image:
+                    <input type="file" name="anime_image" accept=".jpg,.jpeg,.png,.gif" required>
+                  </label>
+                </fieldset>
+                <p class="form-actions"><input type="submit" value="Save Anime"></p>
+              </form>
+            </div>
+
+            <div class="auth-form-wrapper" id="game-form">
+              <h2>Add Game</h2>
+              <form method="post" action="/addGame" enctype="multipart/form-data" autocomplete="off">
+                <fieldset class="form-fieldset">
+                  <legend><strong>Game Details</strong></legend>
+                  <label class="label-block">Game Name:
+                    <input type="text" name="game_name" required>
+                  </label>
+                  <div class="form-row">
+                    <label>Release Date:
+                      <input type="date" name="release_date" required max="<%= new Date(new Date().setFullYear(new Date().getFullYear() + 5)).toISOString().split('T')[0] %>" min="1996-01-01">
+                    </label>
+                    <label>Minimum Age:
+                      <input type="number" name="minimum_age" min="0" required class="input-num-age">
+                    </label>
+                  </div>
+                  <div class="form-row">
+                    <label>Price:
+                      <input type="number" name="price" min="0" step="0.01" required class="input-num-md">
+                    </label>
+                    <label>Duration (hours):
+                      <input type="number" name="duration" min="1" required class="input-num-md">
+                    </label>
+                  </div>
+                </fieldset>
+                <fieldset class="form-fieldset">
+                  <legend><strong>Additional Info</strong></legend>
+                  <label class="label-block">Platform:
+                    <input type="text" name="platform" placeholder="e.g., Nintendo Switch, PC">
+                  </label>
+                  <label class="label-block">Genre:
+                    <input type="text" name="genre" placeholder="e.g., RPG, Adventure">
+                  </label>
+                  <label class="label-block">Description:
+                    <textarea name="game_description" rows="4" class="textarea-block"></textarea>
+                  </label>
+                </fieldset>
+                <fieldset class="form-fieldset">
+                  <legend><strong>Picture</strong></legend>
+                  <label class="label-block">Upload Image:
+                    <input type="file" name="game_image" accept=".jpg,.jpeg,.png,.gif" required>
+                  </label>
+                </fieldset>
+                <p class="form-actions"><input type="submit" value="Save Game"></p>
+              </form>
+            </div>
+          </div>
+          <% } %>
+        </div>
+      </main>
+    </div>
+  </div>
+  <footer class="footer">
+  <p>Pokemon project 2025 - Vitaly, Liad and Ido</p>
+</footer>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="../JQuery/jquery-features.js"></script>
+  <script src="../JQuery/navbar-profile.js"></script>
+  <script src="../JavaScript/add-form-toggle.js"></script>
+  <script src="../JavaScript/file-upload-validation.js"></script>
+  <script src="../JavaScript/anime-date-validation.js"></script>
+  <script src="../JavaScript/auth-tab-switcher.js"></script>
+  <script src="../JavaScript/auth-toggle.js"></script>
+  <script src="../JavaScript/auth-forms.js"></script>
+</body>
+
+</html>
+

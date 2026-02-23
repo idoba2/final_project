@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pokemon Pokedex</title>
+  <link rel="stylesheet" type="text/css" href="../CSS/HomePage_CSS/General_css.css">
+  <link rel="stylesheet" type="text/css" href="../CSS/HomePage_CSS/Pokedex_css.css">
+  <link rel="icon" type="image/png" href="../IMG/HomePage_Images/icon.png">
+</head>
+
+<body class="body">
+  <header class="header">
+  <picture>
+    <source media="(min-width: 900px)" srcset="../IMG/HomePage_Images/header-lg.png">
+    <source media="(min-width: 620px)" srcset="../IMG/HomePage_Images/header-md.png">
+    <img src="../IMG/HomePage_Images/header-sm.png" alt="Pokemon banner">
+  </picture>
+</header>
+  <%
+  const displayName = (typeof user !== 'undefined' && user && user.username)
+    ? user.username
+    : (username || 'Trainer');
+%>
+<nav class="main-menu grid-container" role="navigation" aria-label="Main menu">
+  <!-- Reusing the same menu logic so navigation stays consistent -->
+  <ul class="main-menu-list">
+    <li class="main-menu-item"><a href="/" class="main-menu-heading" title="Home Page">Home Page</a></li>
+    <li class="main-menu-item"><a href="/Pokedex" class="main-menu-heading" title="Pokedex">Pokedex</a></li>
+    <li class="main-menu-item"><a href="/Anime" class="main-menu-heading" title="Anime Series">Anime Series</a></li>
+    <li class="main-menu-item"><a href="/Games" class="main-menu-heading" title="Games">Games</a></li>
+    <% if (isLoggedIn) { %>
+      <li class="main-menu-item"><a href="/Add" class="main-menu-heading" title="Add Content">Add Content</a></li>
+    <% } else { %>
+      <li class="main-menu-item"><span class="main-menu-heading disabled-link-wrapper" data-tooltip="You must log in to add content" aria-disabled="true">Add Content</span></li>
+    <% } %>
+
+    <% if (!isLoggedIn) { %>
+      <li class="main-menu-item"><a href="/Add" class="main-menu-heading" title="Login">Login</a></li>
+    <% } else { %>
+      <li class="main-menu-item nav-profile-container">
+        <button type="button" class="main-menu-heading profile-avatar" aria-label="Profile menu" aria-haspopup="true" aria-expanded="false"></button>
+        <ul class="main-menu-sub profile-dropdown">
+          <li class="dropdown-greeting">Hello, <span class="dropdown-username"><%= displayName %></span>!</li>
+          <li><a href="/Profile" class="dropdown-profile-link">View Profile</a></li>
+          <li>
+            <form method="post" action="/logout">
+              <button type="submit" class="dropdown-logout">Logout</button>
+            </form>
+          </li>
+        </ul>
+      </li>
+    <% } %>
+  </ul>
+</nav>
+  <div class="main-size">
+    <div class="home-title">
+      <h1 class="home-title-text">Pokedex</h1>
+    </div>
+    <div class="content">
+      <main class="main">
+        <div class="flex-container">
+          <!-- JS fills this table body after it fetches rows from /api/pokemon -->
+          <table id="pokedexTable" class="pokedex-table" border="1" cellpadding="8" cellspacing="0">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>T1</th>
+                <th>T2</th>
+                <th>HP</th>
+                <th>Atk</th>
+                <th>Def</th>
+                <th>SpA</th>
+                <th>SpD</th>
+                <th>By</th>
+              </tr>
+            </thead>
+            <tbody id="pokedexTableBody">
+              <!-- Fallback message while data is still loading -->
+              <tr>
+                <td colspan="9">Loading...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+  <footer class="footer">
+  <p>Pokemon project 2025 - Vitaly, Liad and Ido</p>
+</footer>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="../JQuery/jquery-features.js"></script>
+  <script src="../JQuery/navbar-profile.js"></script>
+  <script src="../JavaScript/pokedex-table.js"></script>
+</body>
+
+</html>
+
